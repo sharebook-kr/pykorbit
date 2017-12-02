@@ -148,7 +148,17 @@ class Korbit(object):
         if expected_quantity < min_order:
             print(min_order, "이상만 가능합니다.")
 
-        self._buy(currency, "market", 0, 0, expenditure)
+        nonce = str(int(time.time()))
+        headers = {"Authorization": "Bearer " + self.access_token}
+        data = {"currency_pair": currency,
+                "type": "market",
+                "fiat_amount": expenditure,
+                "nonce": nonce}
+
+        url = "https://api.korbit.co.kr/v1/user/orders/buy"
+        r = requests.post(url, headers=headers, data=data)
+        contents = r.json()
+        return contents
 
     def buy_limit_order(self, currency, price, amount):
         """
@@ -158,22 +168,17 @@ class Korbit(object):
         :param amount: 매수량
         :return:
         """
-
         min_order = self._get_min_order(currency)
 
         if amount < min_order:
             print(min_order, "이상만 가능합니다.")
 
-        self._buy(currency, "limit", price, amount, 0)
-
-    def _buy(self, currency, order_type, price, coin_amount, fiat_amount):
         nonce = str(int(time.time()))
         headers = {"Authorization": "Bearer " + self.access_token}
         data = {"currency_pair": currency,
-                "type": order_type,
+                "type": "limit",
                 "price": price,
-                "coin_amount": coin_amount,
-                "fiat_amount": fiat_amount,
+                "coin_amount": amount,
                 "nonce": nonce}
 
         url = "https://api.korbit.co.kr/v1/user/orders/buy"
@@ -200,5 +205,5 @@ if __name__ == "__main__":
     email = "your-email@gmail.com"
     password = "your-password"
     korbit = Korbit(email, password)
-    #korbit.buy_market_order("etc_krw", 9800)
-    korbit.buy_limit_order("etc_krw", 30000, 0.1)
+    korbit.buy_market_order("etc_krw", 9800)
+    #korbit.buy_limit_order("etc_krw", 30000, 0.1)
