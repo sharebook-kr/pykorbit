@@ -1,6 +1,5 @@
 import requests
 import time
-import csv
 
 
 def get_current_price(currency="btc_krw"):
@@ -61,25 +60,13 @@ def get_constants():
 
 
 class Korbit(object):
-    def __init__(self, email, password):
+    def __init__(self, email, password, key, secret):
         self.email = email
         self.password = password
-        self._read_keys_csv()
+        self.key = key
+        self.secret = secret
         self._get_constants()
         self._issue_access_token()
-
-    def _read_keys_csv(self):
-        """
-        현재 디렉터리에 있는 keys.csv 파일로부터 key와 secret 정보를 읽어오는 메서드
-        :return:
-        """
-        f = open("keys.csv")
-        reader = csv.reader(f)
-        lines = list(reader)
-        f.close()
-
-        self.key = lines[1][0]
-        self.secret = lines[1][1]
 
     def _issue_access_token(self):
         """
@@ -335,7 +322,9 @@ if __name__ == "__main__":
     #----------------------------------------------------------------------------------------------
     #email = "your-email@gmail.com"
     #password = "your-password"
-    #korbit = Korbit(email, password)
+    #key = ""
+    #secret = ""
+    #korbit = Korbit(email, password, key, secret)
     #korbit.buy_market_order("etc_krw", 9800)
     #korbit.buy_limit_order("etc_krw", 30000, 0.1)
 
