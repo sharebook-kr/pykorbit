@@ -41,5 +41,3 @@ def get_daily_ohlc(symbol="BTC", start=None, end=None):
 if __name__ == "__main__":
     df = get_daily_ohlc("BTC", "2018-02-01", "2018-02-03")
     print(df)
-
-
