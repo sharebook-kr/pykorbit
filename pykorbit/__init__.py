@@ -56,7 +56,7 @@ def get_constants():
     url = "https://api.korbit.co.kr/v1/constants"
     r = requests.get(url)
     contents = r.json()
-    return contents
+    return contents['exchange']
 
 
 class Korbit(object):
@@ -102,27 +102,49 @@ class Korbit(object):
 
     def _get_constants(self):
         contents = get_constants()
+        print(len(contents))
 
         # btc
-        self.btc_tick_size = contents['btcTickSize']
-        self.btc_max_order = contents['maxBtcOrder']
-        self.btc_min_order = contents['minBtcOrder']
-        self.btc_max_order_price = contents["maxBtcPrice"]
-        self.btc_min_order_price = contents["minBtcPrice"]
+        self.btc_tick_size = contents['btc_krw']['tick_size']
+        self.btc_max_order = contents['btc_krw']['order_max_size']
+        self.btc_min_order = contents['btc_krw']['order_min_size']
+        self.btc_max_order_price = contents['btc_krw']["max_price"]
+        self.btc_min_order_price = contents['btc_krw']["min_price"]
 
-        # etc
-        self.etc_tick_size = contents['etcTickSize']
-        self.etc_max_order = contents['maxEtcOrder']
-        self.etc_min_order = contents['minEtcOrder']
-        self.etc_max_order_price = contents["maxEtcPrice"]
-        self.etc_min_order_price = contents["minEtcPrice"]
+        # bch
+        self.bch_tick_size = contents['bch_krw']['tick_size']
+        self.bch_max_order = contents['bch_krw']['order_max_size']
+        self.bch_min_order = contents['bch_krw']['order_min_size']
+        self.bch_max_order_price = contents['bch_krw']["max_price"]
+        self.bch_min_order_price = contents['bch_krw']["min_price"]
+
+        # btg
+        self.btg_tick_size = contents['btg_krw']['tick_size']
+        self.btg_max_order = contents['btg_krw']['order_max_size']
+        self.btg_min_order = contents['btg_krw']['order_min_size']
+        self.btg_max_order_price = contents['btg_krw']["max_price"]
+        self.btg_min_order_price = contents['btg_krw']["min_price"]
 
         # eth
-        self.eth_tick_size = contents['ethTickSize']
-        self.eth_max_order = contents['maxEthOrder']
-        self.eth_min_order = contents['minEthOrder']
-        self.eth_max_order_price = contents["maxEthPrice"]
-        self.eth_min_order_price = contents["minEthPrice"]
+        self.eth_tick_size = contents['eth_krw']['tick_size']
+        self.eth_max_order = contents['eth_krw']['order_max_size']
+        self.eth_min_order = contents['eth_krw']['order_min_size']
+        self.eth_max_order_price = contents['eth_krw']["max_price"]
+        self.eth_min_order_price = contents['eth_krw']["min_price"]
+
+        # etc
+        self.etc_tick_size = contents['etc_krw']['tick_size']
+        self.etc_max_order = contents['etc_krw']['order_max_size']
+        self.etc_min_order = contents['etc_krw']['order_min_size']
+        self.etc_max_order_price = contents['etc_krw']["max_price"]
+        self.etc_min_order_price = contents['etc_krw']["min_price"]
+
+        # xrp
+        self.xrp_tick_size = contents['xrp_krw']['tick_size']
+        self.xrp_max_order = contents['xrp_krw']['order_max_size']
+        self.xrp_min_order = contents['xrp_krw']['order_min_size']
+        self.xrp_max_order_price = contents['xrp_krw']["max_price"]
+        self.xrp_min_order_price = contents['xrp_krw']["min_price"]
 
     def _get_tick_size(self, currency):
         """
@@ -130,16 +152,18 @@ class Korbit(object):
         :param currency: etc_krw/eth_krw/btc_krw/xrp_krw/bch_krw
         :return:
         """
-        if currency == "etc_krw":
-            return self.etc_tick_size
+        if currency == "btc_krw":
+            return self.btc_tick_size
+        elif currency == "bch_krw":
+            return self.bch_tick_size
+        elif currency == "btg_krw":
+            return self.btg_tick_size
         elif currency == "eth_krw":
             return self.eth_tick_size
-        elif currency == "btc_krw":
-            return self.btc_tick_size
+        if currency == "etc_krw":
+            return self.etc_tick_size
         elif currency == "xrp_krw":
-            return 1
-        elif currency == "bch_krw":
-            return 500
+            return self.xrp_tick_size
 
     def _get_min_order(self, currency):
         """
@@ -147,16 +171,18 @@ class Korbit(object):
         :param currency:
         :return:
         """
-        if currency == "etc_krw":
-            return self.etc_min_order
+        if currency == "btc_krw":
+            return self.btc_min_order
+        elif currency == "bch_krw":
+            return self.bch_min_order
+        elif currency == "btg_krw":
+            return self.btg_min_order
         elif currency == "eth_krw":
             return self.eth_min_order
-        elif currency == "btc_krw":
-            return self.btc_min_order
+        elif currency == "etc_krw":
+            return self.etc_min_order
         elif currency == "xrp_krw":
-            return 10
-        elif currency == "bch_krw":
-            return 0.005
+            return self.xrp_min_order
 
     def buy_market_order(self, currency, expenditure):
         """
@@ -285,11 +311,11 @@ if __name__ == "__main__":
     # 최종 체결 가격
     #----------------------------------------------------------------------------------------------
     print("BTC : ", get_current_price("btc_krw"))
-    #print("BCH : ", get_current_price("bch_krw"))
-    #print("BTG : ", get_current_price("btg_krw"))
-    #print("ETH : ", get_current_price("eth_krw"))
-    #print("ETC : ", get_current_price("etc_krw"))
-    #print("XRP : ", get_current_price("xrp_krw"))
+    print("BCH : ", get_current_price("bch_krw"))
+    print("BTG : ", get_current_price("btg_krw"))
+    print("ETH : ", get_current_price("eth_krw"))
+    print("ETC : ", get_current_price("etc_krw"))
+    print("XRP : ", get_current_price("xrp_krw"))
 
     #----------------------------------------------------------------------------------------------
     # 시장 현황 상세정보
@@ -315,15 +341,19 @@ if __name__ == "__main__":
     # 제약조건
     #----------------------------------------------------------------------------------------------
     #constants = get_constants()
-    #print(len(constants.keys()))
 
     #----------------------------------------------------------------------------------------------
     # 거래소-회원
     #----------------------------------------------------------------------------------------------
     #email = "your-email@gmail.com"
     #password = "your-password"
+    #f = open("keys.csv")
+    #lines = f.readlines()
+    #f.close()
     #key = ""
     #secret = ""
+    #key = lines[1].split(',')[0]
+    #secret = lines[1].split(',')[1]
     #korbit = Korbit(email, password, key, secret)
     #korbit.buy_market_order("etc_krw", 9800)
     #korbit.buy_limit_order("etc_krw", 30000, 0.1)
