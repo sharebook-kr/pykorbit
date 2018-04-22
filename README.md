@@ -6,7 +6,7 @@ Python Wrapper for Korbit API
 pip install pykorbit
 ```
 
-## Basic Usage
+## Public API
 Ticker
 
 ```python
@@ -51,4 +51,14 @@ import pykorbit
 pykorbit.get_constants()
 ```
 
-copy the keys.csv file into the current directory
+## Private API
+```python
+korbit = pykorbit.Korbit("your-email@gmail.com", "your-pass-word", "key", "secret")
+korbit.buy_market_order(btc_rkw", 1)
+```
+
+## History
+```python
+print(pykorbit.get_daily_ohlc("BTC", period=5))
+print(pykorbit.get_daily_ohlc("BTC", start="2018-02-01", end="2018-02-03")) 
+```
