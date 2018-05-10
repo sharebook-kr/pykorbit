@@ -68,20 +68,21 @@ class Korbit(object):
 
         contents = _send_post_request(url, data=data)
 
-        if contents is not None:
-            self.access_token = contents['access_token']
-            self.refresh_token = contents['refresh_token']
+        if isinstance(contents, dict):
+            self.access_token = contents.get('access_token')
+            self.refresh_token = contents.get('refresh_token')
         else:
             self.access_token = None
             self.refresh_token = None
 
-    def _get_tick_size(self, currency="btc_krw"):
+    def _get_tick_size(self, currency="BTC"):
         """
         KRW 기준 호가 단위를 리턴하는 메서드
-        :param currency: etc_krw/eth_krw/btc_krw/xrp_krw/bch_krw
+        :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :return:
         """
         if self.constant is not None:
+            currency = currency.lower() + "_krw"
             currency_dic = self.constant.get(currency)
 
             if isinstance(currency_dic, dict):
@@ -91,13 +92,14 @@ class Korbit(object):
         else:
             return None
 
-    def _get_quantity_min_max(self, currency="btc_krw"):
+    def _get_quantity_min_max(self, currency="BTC"):
         """
         매수/매도 수량 최소 입력값
-        :param currency: etc_krw/eth_krw/btc_krw/xrp_krw/bch_krw
+        :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :return:
         """
         if self.constant is not None:
+            currency = currency.lower() + "_krw"
             currency_dic = self.constant.get(currency)
 
             if isinstance(currency_dic, dict):
@@ -107,13 +109,14 @@ class Korbit(object):
         else:
             return None
 
-    def _get_price_min_max(self, currency="btc_krw"):
+    def _get_price_min_max(self, currency="BTC"):
         """
         최소/최대 주문가 (원화 기준)
-        :param currency: etc_krw/eth_krw/btc_krw/xrp_krw/bch_krw
+        :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :return:
         """
         if self.constant is not None:
+            currency = currency.lower() + "_krw"
             currency_dic = self.constant.get(currency)
 
             if isinstance(currency_dic, dict):
@@ -123,13 +126,14 @@ class Korbit(object):
         else:
             return None
 
-    def buy_market_order(self, currency="btc_krw", expenditure=None):
+    def buy_market_order(self, currency="BTC", expenditure=None):
         """
         시장가로 매수하는 메서드
-        :param currency: btc_krw, bch_krw, eth_krw, etc_krw, xrp_krw
+        :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :param expenditure: 지출액
         :return:
         """
+        currency = currency.lower() + "_krw"
         url = "https://api.korbit.co.kr/v1/user/orders/buy"
         headers = {"Authorization": "Bearer " + self.access_token}
         data = {"currency_pair": currency,
@@ -143,14 +147,15 @@ class Korbit(object):
         else:
             return None, None, None
 
-    def buy_limit_order(self, currency="btc_krw", price=10000, amount=1):
+    def buy_limit_order(self, currency="BTC", price=10000, amount=1):
         """
         지정가로 매수하는 메서드
-        :param currency: btc_krw, bch_krw, eth_krw, etc_krw, xrp_krw
+        :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :param price: 주문가
         :param amount: 매수량
         :return:
         """
+        currency = currency.lower() + "_krw"
         url = "https://api.korbit.co.kr/v1/user/orders/buy"
         headers = {"Authorization": "Bearer " + self.access_token}
         data = {"currency_pair": currency,
@@ -166,13 +171,14 @@ class Korbit(object):
             return None, None, None
 
 
-    def sell_market_order(self, currency="btc_krw", coin_amount=1):
+    def sell_market_order(self, currency="BTC", coin_amount=1):
         """
         시장가 매도
-        :param currency:
+        :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :param coin_amount:
         :return:
         """
+        currency = currency.lower() + "_krw"
         url = "https://api.korbit.co.kr/v1/user/orders/sell"
         headers = {"Authorization": "Bearer " + self.access_token}
         data = {"currency_pair": currency,
@@ -186,7 +192,7 @@ class Korbit(object):
         else:
             return None, None, None
 
-    def sell_limit_order(self, currency="btc_krw", price=10000, coin_amount=1):
+    def sell_limit_order(self, currency="BTC", price=10000, coin_amount=1):
         """
         지정가 매도
         :param currency:
@@ -194,6 +200,7 @@ class Korbit(object):
         :param coin_amount:
         :return:
         """
+        currency = currency.lower() + "_krw"
         url = "https://api.korbit.co.kr/v1/user/orders/sell"
         headers = {"Authorization": "Bearer " + self.access_token}
         data = {"currency_pair": currency,
@@ -208,13 +215,14 @@ class Korbit(object):
         else:
             return None, None, None
 
-    def cancel_order(self, currency="btc_krw", id=10000):
+    def cancel_order(self, currency="BTC", id=10000):
         """
         주문 취소
         :param currency:
         :param id:
         :return:
         """
+        currency = currency.lower() + "_krw"
         url = "https://api.korbit.co.kr/v1/user/orders/cancel"
         headers = {"Authorization": "Bearer " + self.access_token}
         data = {"currency_pair": currency,
@@ -238,29 +246,29 @@ if __name__ == "__main__":
     korbit = Korbit("your-email@gmail.com", "your-pass-word", key, secret)
 
     # 주문 제약 조건
-    #print(korbit._get_tick_size("btc_krw"))
-    #print(korbit._get_quantity_min_max("btc_krw"))
-    #print(korbit._get_price_min_max("btc_krw"))
+    #print(korbit._get_tick_size("BTC"))
+    #print(korbit._get_quantity_min_max("BTC"))
+    #print(korbit._get_price_min_max("BTC"))
 
     # 매수-시장
     print("시장가 매수")
-    print(korbit.buy_market_order("etc_krw", 9800))
+    print(korbit.buy_market_order("ETC", 9800))
 
     # 매수-지정가
     print("지정가 매수")
-    print(korbit.buy_limit_order("etc_krw", 30000, 0.1))
+    print(korbit.buy_limit_order("ETC", 30000, 0.1))
 
     # 지정가 매도
-    print(korbit.sell_limit_order("etc_krw", 45000, 0.28))
+    print(korbit.sell_limit_order("ETC", 45000, 0.28))
 
     # 시장가 매도
-    #print(korbit.sell_market_order("etc_krw", 0.1))
+    #print(korbit.sell_market_order("ETC", 0.1))
 
 
     # 주문 취소
     time.sleep(1)
-    #print(korbit.cancel_order("btc_krw", 9000))
-    print(korbit.cancel_order("btc_krw", [1000, 10001]))
+    #print(korbit.cancel_order("BTC", 9000))
+    print(korbit.cancel_order("BTC", [1000, 10001]))
     #print(ret)
 
     # 지갑 잔고 조회

@@ -10,12 +10,13 @@ def _call_public_api(url, **kwargs):
         return None
 
 
-def get_current_price(currency="btc_krw"):
+def get_current_price(currency="BTC"):
     """
     최종 체결 가격을 얻어오는 메서드
-    :param currency: btc_krw/bch_krw/btg_krw/eth_krw/etc_krw/xrp_krw
+    :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :return: price
     """
+    currency = currency.lower() + "_krw"
     url = "https://api.korbit.co.kr/v1/ticker"
     contents = _call_public_api(url, currency_pair=currency)
 
@@ -26,12 +27,13 @@ def get_current_price(currency="btc_krw"):
         return None
 
 
-def get_market_detail(currency="btc_krw"):
+def get_market_detail(currency="BTC"):
     """
     시장 현황 상세정보를 얻어오는 메서드
-    :param currency: btc_krw/bch_krw/btg_krw/eth_krw/etc_krw/xrp_krw
+    :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :return: (24시간저가, 24시간고가, 최종체결가격, 거래량)
     """
+    currency = currency.lower() + "_krw"
     url = "https://api.korbit.co.kr/v1/ticker/detailed"
     contents = _call_public_api(url, currency_pair=currency)
 
@@ -42,27 +44,29 @@ def get_market_detail(currency="btc_krw"):
         volume = contents['volume']
         return float(low), float(high), float(last), float(volume)
     else:
-        return None
+        return None, None, None, None
 
 
-def get_orderbook(currency="btc_krw"):
+def get_orderbook(currency="BTC"):
     """
     매수/매도 호가를 얻어오는 메서드
-    :param currency: btc_krw/bch_krw/btg_krw/eth_krw/etc_krw/xrp_krw
+    :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :return: 매수/매도 호가
     """
+    currency = currency.lower() + "_krw"
     url = "https://api.korbit.co.kr/v1/orderbook"
     contents = _call_public_api(url, currency_pair=currency)
     return contents
 
 
-def get_transaction_data(currency="btc_krw", interval="day"):
+def get_transaction_data(currency="BTC", interval="day"):
     """
     최근 1분/최근 1시간/최근 1일의 체결 데이터를 요청
-    :param currency: btc_krw/bch_krw/btg_krw/eth_krw/etc_krw/xrp_krw
+    :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :param interval: minute/hour/day
     :return:
     """
+    currency = currency.lower() + "_krw"
     url = "https://api.korbit.co.kr/v1/transactions"
     contents = _call_public_api(url, currency_pair=currency, time=interval)
     return contents
@@ -85,42 +89,22 @@ if __name__ == "__main__":
     #----------------------------------------------------------------------------------------------
     # 최종 체결 가격
     #----------------------------------------------------------------------------------------------
-    print("BTC : ", get_current_price("btc_krw"))
-    #print("BCH : ", get_current_price("bch_krw"))
-    #print("BTG : ", get_current_price("btg_krw"))
-    #print("ETH : ", get_current_price("eth_krw"))
-    #print("ETC : ", get_current_price("etc_krw"))
-    #print("XRP : ", get_current_price("xrp_krw"))
+    print("BTC : ", get_current_price("BTC"))
 
     #----------------------------------------------------------------------------------------------
     # 시장 현황 상세정보
     #----------------------------------------------------------------------------------------------
-    print("BTC : ", get_market_detail("btc_krw"))
-    #print("BCH : ", get_market_detail("bch_krw"))
-    #print("BTG : ", get_market_detail("btg_krw"))
-    #print("ETH : ", get_market_detail("eth_krw"))
-    #print("ETC : ", get_market_detail("etc_krw"))
-    #print("XRP : ", get_market_detail("xrp_krw"))
+    print("BTC : ", get_market_detail("BTC"))
 
     #----------------------------------------------------------------------------------------------
     # 매수/매도 호가
     #----------------------------------------------------------------------------------------------
-    print("BTC : ", get_orderbook("btc_krw"))
-    #print("BCH : ", get_orderbook("bch_krw"))
-    #print("BTG : ", get_orderbook("btg_krw"))
-    #print("ETH : ", get_orderbook("eth_krw"))
-    #print("ETC : ", get_orderbook("etc_krw"))
-    #print("XRP : ", get_orderbook("xrp_krw"))
+    print("BTC : ", get_orderbook("BTC"))
 
     #----------------------------------------------------------------------------------------------
     # 체결 내역 (과거 데이터)
     #----------------------------------------------------------------------------------------------
-    print("BTC : ", get_transaction_data("btc_krw", "day"))
-    #print("BCH : ", get_transaction_data("bch_krw", "day"))
-    #print("BTG : ", get_transaction_data("btg_krw", "day"))
-    #print("ETH : ", get_transaction_data("eth_krw", "day"))
-    #print("ETC : ", get_transaction_data("etc_krw", "day"))
-    #print("XRP : ", get_transaction_data("xrp_krw", "day"))
+    print("BTC : ", get_transaction_data(currency="BTC", interval="day"))
 
     #----------------------------------------------------------------------------------------------
     # 제약조건

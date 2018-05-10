@@ -3,9 +3,10 @@ import datetime
 import pandas as pd
 
 
-def get_daily_ohlc(symbol="BTC", start=None, end=None, period=None):
+def get_ohlc(symbol="BTC", timeunit="day", start=None, end=None, period=None):
     '''
     :param symbol: BTC/ETH/BCH/ETC
+    :param timeunit: day/hour/minute
     :param start: 2018-01-01
     :param end: 2018-03-01
     :param period: 5 days
@@ -28,7 +29,10 @@ def get_daily_ohlc(symbol="BTC", start=None, end=None, period=None):
     if isinstance(period, int):
         limit = period
     else:
-        limit = delta.days
+        if timeunit == 'day':
+            limit = delta.days
+        else:
+            limit = 2001
 
     payload = {"fsym": symbol,
                "tsym": "KRW",
@@ -37,7 +41,7 @@ def get_daily_ohlc(symbol="BTC", start=None, end=None, period=None):
                "toTs": timestamp}
 
     try:
-        url = "https://min-api.cryptocompare.com/data/histoday"
+        url = "https://min-api.cryptocompare.com/data/histo" + timeunit
         r = requests.get(url, params=payload)
         content = r.json()
     except:
@@ -52,6 +56,15 @@ def get_daily_ohlc(symbol="BTC", start=None, end=None, period=None):
 
 
 if __name__ == "__main__":
-    print(get_daily_ohlc("BTC", start="2018-02-01", end="2018-02-03"))
-    print(get_daily_ohlc("BTC", period=5))
-    print(get_daily_ohlc("BTC", end="2018-02-03", period=5))
+    # day
+    #print(get_ohlc(symbol="BTC", start="2018-02-01", end="2018-02-03"))
+    #print(get_ohlc(symbol="BTC", period=5))
+    #print(get_ohlc(symbol="BTC", end="2018-02-03", period=5))
+
+    # hour
+    print(get_ohlc(symbol="BTC", timeunit='hour'))
+    print(get_ohlc(symbol="BTC", timeunit='hour', period=5))
+
+    # minute
+    print(get_ohlc(symbol="BTC", timeunit='minute'))
+    print(get_ohlc(symbol="BTC", timeunit='minute', period=5))
