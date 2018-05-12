@@ -49,8 +49,15 @@ class Korbit(object):
             self.access_token = contents.get('access_token')
             self.refresh_token = contents.get('refresh_token')
         else:
-            self.access_token = None
-            self.refresh_token = None
+            # try again
+            time.sleep(0.2)
+            contents = _send_post_request(url, data=data)
+            if isinstance(contents, dict):
+                self.access_token = contents.get('access_token')
+                self.refresh_token = contents.get('refresh_token')
+            else:
+                self.access_token = None
+                self.refresh_token = None
 
     def _get_constants(self):
         self.constant = get_constants()
@@ -72,8 +79,15 @@ class Korbit(object):
             self.access_token = contents.get('access_token')
             self.refresh_token = contents.get('refresh_token')
         else:
-            self.access_token = None
-            self.refresh_token = None
+            # try again
+            time.sleep(0.2)
+            contents = _send_post_request(url, data=data)
+            if isinstance(contents, dict):
+                self.access_token = contents.get('access_token')
+                self.refresh_token = contents.get('refresh_token')
+            else:
+                self.access_token = None
+                self.refresh_token = None
 
     def _get_tick_size(self, currency="BTC"):
         """
