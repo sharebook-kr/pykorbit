@@ -1,12 +1,32 @@
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+
+def requests_retry_session(retries=5, backoff_factor=0.3, status_forcelist=(500, 502, 504), session=None):
+    s = session or requests.Session()
+    retry = Retry(
+        total=retries,
+        read=retries,
+        connect=retries,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist)
+    adapter = HTTPAdapter(max_retries=retry)
+    s.mount('http://', adapter)
+    s.mount('https://', adapter)
+    return s
 
 
 def _call_public_api(url, **kwargs):
     try:
-        r = requests.get(url, params=kwargs)
-        contents = r.json()
+        resp = requests_retry_session().get(url, params=kwargs)
+        contents = resp.json()
         return contents
-    except:
+    except Exception as x:
+        print("It failed", x.__class__.__name__)
+        return None
+    else:
+        print(resp.status_code)
         return None
 
 
