@@ -22,7 +22,6 @@ def _send_post_request(url, headers=None, data=None):
 def _send_get_request(url, headers=None):
     try:
         resp = requests_retry_session().get(url, headers=headers)
-        print(resp)
         contents = resp.json()
         return contents
     except Exception as x:
@@ -262,21 +261,28 @@ class Korbit(object):
         headers = self.get_headers()
         return _send_get_request(url, headers=headers)
 
-    def get_open_order(self, currency, order_id):
-        url = "https://api.korbit.co.kr/v1/user/orders"
-        data = {"currency_pair": currency.lower() + "_krw",
-                "status": 'partially_filled',
-                "id": order_id,
-                "nonce": str(int(time.time()))}
-        headers = self.get_headers().update(data)
+    def get_open_orders(self, currency="BTC", offset=0, limit=10):
+        """
+        미 체결 주문 내역
+        :param currency: "BTC", "ETC", "ETH", "XRP", "BCH", "LTC"
+        :param offset: offset
+        :param limit: requested number of open orders
+        :return:
+        """
+        url = "https://api.korbit.co.kr/v1/user/orders/open?currency_pair={}&offset={}&limit={}".format(currency.lower() + "_krw", offset, limit)
+        headers = self.get_headers()
         return _send_get_request(url, headers=headers)
 
-    def get_outstanding_order(self, currency):
-        url = "https://api.korbit.co.kr/v1/user/orders/open"
-        data = {"currency_pair": currency.lower() + "_krw",
-                "nonce": str(int(time.time()))}
+    def get_orders(self):
+        url = "https://api.korbit.co.kr/v1/user/orders"
         headers = self.get_headers()
-        return _send_get_request(url, headers=headers, data=data)
+        return _send_get_request(url, headers=headers)
+
+    def get_transfers(self, currency="KRW", type="all", offset=0, limit=40):
+        url = "https://api.korbit.co.kr/v1/user/transfers?currency={}&type={}&offset={}&limit={}".format(currency, type, offset, limit)
+        headers = self.get_headers()
+        return _send_get_request(url, headers=headers)
+
 
 if __name__ == "__main__":
     with open("korbit.conf") as f:
@@ -295,7 +301,7 @@ if __name__ == "__main__":
 
     # 매수-지정가
     #print("지정가 매수")
-    #print(korbit.buy_limit_order("ETC", 30000, 0.1))
+    #print(korbit.buy_limit_order("ETC", 9000, 0.1))
 
     # 지정가 매도
     # print(korbit.sell_limit_order("ETH", 850000, 0.15267251))
@@ -313,5 +319,18 @@ if __name__ == "__main__":
     # 지갑 잔고 조회
     # print(korbit.get_balances())
 
-    print(korbit.get_outstanding_order("ETH"))
-    print(korbit.get_open_order("ETH", 19449878))
+    # 미 체결 주문 내역
+    # time.sleep(1)
+    # open_orders = korbit.get_open_orders(currency="ETC", offset=0, limit=2)
+    # print(len(open_orders))
+    # print(open_orders)
+
+    # 거래소 주문 조회
+    orders = korbit.get_orders()
+    print(len(orders))
+    print(orders)
+
+    # 입출금 내역 조회
+    transfers = korbit.get_transfers()
+    print(len(transfers))
+    print(transfers)
