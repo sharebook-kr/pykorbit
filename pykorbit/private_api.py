@@ -22,6 +22,7 @@ def _send_post_request(url, headers=None, data=None):
 def _send_get_request(url, headers=None):
     try:
         resp = requests_retry_session().get(url, headers=headers)
+        print(resp)
         contents = resp.json()
         return contents
     except Exception as x:
@@ -261,6 +262,21 @@ class Korbit(object):
         headers = self.get_headers()
         return _send_get_request(url, headers=headers)
 
+    def get_open_order(self, currency, order_id):
+        url = "https://api.korbit.co.kr/v1/user/orders"
+        data = {"currency_pair": currency.lower() + "_krw",
+                "status": 'partially_filled',
+                "id": order_id,
+                "nonce": str(int(time.time()))}
+        headers = self.get_headers().update(data)
+        return _send_get_request(url, headers=headers)
+
+    def get_outstanding_order(self, currency):
+        url = "https://api.korbit.co.kr/v1/user/orders/open"
+        data = {"currency_pair": currency.lower() + "_krw",
+                "nonce": str(int(time.time()))}
+        headers = self.get_headers()
+        return _send_get_request(url, headers=headers, data=data)
 
 if __name__ == "__main__":
     with open("korbit.conf") as f:
@@ -282,7 +298,7 @@ if __name__ == "__main__":
     #print(korbit.buy_limit_order("ETC", 30000, 0.1))
 
     # 지정가 매도
-    #print(korbit.sell_limit_order("ETC", 45000, 0.28))
+    # print(korbit.sell_limit_order("ETH", 850000, 0.15267251))
 
     # 시장가 매도
     #print(korbit.sell_market_order("ETC", 0.1))
@@ -295,4 +311,7 @@ if __name__ == "__main__":
     #print(ret)
 
     # 지갑 잔고 조회
-    print(korbit.get_balances())
+    # print(korbit.get_balances())
+
+    print(korbit.get_outstanding_order("ETH"))
+    print(korbit.get_open_order("ETH", 19449878))
