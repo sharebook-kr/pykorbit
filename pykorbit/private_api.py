@@ -283,6 +283,16 @@ class Korbit(object):
         headers = self.get_headers()
         return _send_get_request(url, headers=headers)
 
+    def get_fee(self, currency="all"):
+        if currency == "all":
+            currency_pair = "all"
+        else:
+            currency_pair = currency.lower() + "_krw"
+
+        url = "https://api.korbit.co.kr/v1/user/volume?currency_pair={}".format(currency_pair)
+        headers = self.get_headers()
+        return _send_get_request(url, headers=headers)
+
 
 if __name__ == "__main__":
     with open("korbit.conf") as f:
@@ -334,3 +344,7 @@ if __name__ == "__main__":
     transfers = korbit.get_transfers()
     print(len(transfers))
     print(transfers)
+
+    # 거래량과 거래 수수료
+    fee = korbit.get_fee("BTC")
+    print(fee)
