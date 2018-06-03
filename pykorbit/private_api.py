@@ -98,15 +98,19 @@ class Korbit(object):
         :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :return:
         """
-        if self.constant is not None:
-            currency = currency.lower() + "_krw"
-            currency_dic = self.constant.get(currency)
+        try:
+            if self.constant is not None:
+                currency = currency.lower() + "_krw"
+                currency_dic = self.constant.get(currency)
 
-            if isinstance(currency_dic, dict):
-                return currency_dic.get("tick_size")
+                if isinstance(currency_dic, dict):
+                    return currency_dic.get("tick_size")
+                else:
+                    return None
             else:
                 return None
-        else:
+        except Exception as x:
+            print(x.__class__.__name__)
             return None
 
     def _get_quantity_min_max(self, currency="BTC"):
@@ -115,16 +119,21 @@ class Korbit(object):
         :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :return:
         """
-        if self.constant is not None:
-            currency = currency.lower() + "_krw"
-            currency_dic = self.constant.get(currency)
+        try:
+            if self.constant is not None:
+                currency = currency.lower() + "_krw"
+                currency_dic = self.constant.get(currency)
 
-            if isinstance(currency_dic, dict):
-                return currency_dic.get("order_min_size"), currency_dic.get("order_max_size")
+                if isinstance(currency_dic, dict):
+                    return currency_dic.get("order_min_size"), currency_dic.get("order_max_size")
+                else:
+                    return None
             else:
                 return None
-        else:
+        except Exception as x:
+            print(x.__class__.__name__)
             return None
+
 
     def _get_price_min_max(self, currency="BTC"):
         """
@@ -132,23 +141,31 @@ class Korbit(object):
         :param currency: BTC/BCH/BTG/ETH/ETC/XRP
         :return:
         """
-        if self.constant is not None:
-            currency = currency.lower() + "_krw"
-            currency_dic = self.constant.get(currency)
+        try:
+            if self.constant is not None:
+                currency = currency.lower() + "_krw"
+                currency_dic = self.constant.get(currency)
 
-            if isinstance(currency_dic, dict):
-                return currency_dic.get("min_price"), currency_dic.get("max_price")
+                if isinstance(currency_dic, dict):
+                    return currency_dic.get("min_price"), currency_dic.get("max_price")
+                else:
+                    return None
             else:
                 return None
-        else:
+        except Exception as x:
+            print(x.__class__.__name__)
             return None
 
     def get_headers(self):
-        if self.access_token is not None:
-            headers = {"Authorization": "Bearer " + self.access_token}
-            return headers
-        else:
-            print("current access_token is not valid")
+        try:
+            if self.access_token is not None:
+                headers = {"Authorization": "Bearer " + self.access_token}
+                return headers
+            else:
+                print("current access_token is not valid")
+                return None
+        except Exception as x:
+            print(x.__class__.__name__)
             return None
 
     def buy_market_order(self, currency="BTC", expenditure=None):
@@ -158,18 +175,22 @@ class Korbit(object):
         :param expenditure: 지출액
         :return:
         """
-        currency = currency.lower() + "_krw"
-        url = "https://api.korbit.co.kr/v1/user/orders/buy"
-        headers = self.get_headers()
-        data = {"currency_pair": currency,
-                "type": "market",
-                "fiat_amount": expenditure,
-                "nonce": str(int(time.time()))}
+        try:
+            currency = currency.lower() + "_krw"
+            url = "https://api.korbit.co.kr/v1/user/orders/buy"
+            headers = self.get_headers()
+            data = {"currency_pair": currency,
+                    "type": "market",
+                    "fiat_amount": expenditure,
+                    "nonce": str(int(time.time()))}
 
-        contents = _send_post_request(url, headers=headers, data=data)
-        if contents is not None:
-            return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
-        else:
+            contents = _send_post_request(url, headers=headers, data=data)
+            if contents is not None:
+                return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
+            else:
+                return None, None, None
+        except Exception as x:
+            print(x.__class__.__name__)
             return None, None, None
 
     def buy_limit_order(self, currency="BTC", price=10000, amount=1):
@@ -180,21 +201,24 @@ class Korbit(object):
         :param amount: 매수량
         :return:
         """
-        currency = currency.lower() + "_krw"
-        url = "https://api.korbit.co.kr/v1/user/orders/buy"
-        headers = self.get_headers()
-        data = {"currency_pair": currency,
-                "type": "limit",
-                "price": price,
-                "coin_amount": amount,
-                "nonce": str(int(time.time()))}
+        try:
+            currency = currency.lower() + "_krw"
+            url = "https://api.korbit.co.kr/v1/user/orders/buy"
+            headers = self.get_headers()
+            data = {"currency_pair": currency,
+                    "type": "limit",
+                    "price": price,
+                    "coin_amount": amount,
+                    "nonce": str(int(time.time()))}
 
-        contents = _send_post_request(url, headers=headers, data=data)
-        if contents is not None:
-            return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
-        else:
+            contents = _send_post_request(url, headers=headers, data=data)
+            if contents is not None:
+                return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
+            else:
+                return None, None, None
+        except Exception as x:
+            print(x.__class__.__name__)
             return None, None, None
-
 
     def sell_market_order(self, currency="BTC", coin_amount=1):
         """
@@ -203,18 +227,22 @@ class Korbit(object):
         :param coin_amount:
         :return:
         """
-        currency = currency.lower() + "_krw"
-        url = "https://api.korbit.co.kr/v1/user/orders/sell"
-        headers = self.get_headers()
-        data = {"currency_pair": currency,
-                "type": "market",
-                "coin_amount": coin_amount,
-                "nonce": str(int(time.time()))}
+        try:
+            currency = currency.lower() + "_krw"
+            url = "https://api.korbit.co.kr/v1/user/orders/sell"
+            headers = self.get_headers()
+            data = {"currency_pair": currency,
+                    "type": "market",
+                    "coin_amount": coin_amount,
+                    "nonce": str(int(time.time()))}
 
-        contents = _send_post_request(url, headers=headers, data=data)
-        if contents is not None:
-            return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
-        else:
+            contents = _send_post_request(url, headers=headers, data=data)
+            if contents is not None:
+                return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
+            else:
+                return None, None, None
+        except Exception as x:
+            print(x.__class__.__name__)
             return None, None, None
 
     def sell_limit_order(self, currency="BTC", price=10000, coin_amount=1):
@@ -225,19 +253,23 @@ class Korbit(object):
         :param coin_amount:
         :return:
         """
-        currency = currency.lower() + "_krw"
-        url = "https://api.korbit.co.kr/v1/user/orders/sell"
-        headers = self.get_headers()
-        data = {"currency_pair": currency,
-                "type": "limit",
-                "price": price,
-                "coin_amount": coin_amount,
-                "nonce": str(int(time.time()))}
+        try:
+            currency = currency.lower() + "_krw"
+            url = "https://api.korbit.co.kr/v1/user/orders/sell"
+            headers = self.get_headers()
+            data = {"currency_pair": currency,
+                    "type": "limit",
+                    "price": price,
+                    "coin_amount": coin_amount,
+                    "nonce": str(int(time.time()))}
 
-        contents = _send_post_request(url, headers=headers, data=data)
-        if contents is not None:
-            return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
-        else:
+            contents = _send_post_request(url, headers=headers, data=data)
+            if contents is not None:
+                return contents.get('orderId'), contents.get('status'), contents.get('currencyPair')
+            else:
+                return None, None, None
+        except Exception as x:
+            print(x.__class__.__name__)
             return None, None, None
 
     def cancel_order(self, currency="BTC", id=10000):
@@ -247,14 +279,18 @@ class Korbit(object):
         :param id:
         :return:
         """
-        currency = currency.lower() + "_krw"
-        url = "https://api.korbit.co.kr/v1/user/orders/cancel"
-        headers = self.get_headers()
-        data = {"currency_pair": currency,
-                "id": id,
-                "nonce": str(int(time.time()))}
+        try:
+            currency = currency.lower() + "_krw"
+            url = "https://api.korbit.co.kr/v1/user/orders/cancel"
+            headers = self.get_headers()
+            data = {"currency_pair": currency,
+                    "id": id,
+                    "nonce": str(int(time.time()))}
 
-        return _send_post_request(url, headers=headers, data=data)
+            return _send_post_request(url, headers=headers, data=data)
+        except Exception as x:
+            print(x.__class__.__name__)
+            return None
 
     def get_balances(self):
         url = "https://api.korbit.co.kr/v1/user/balances"
@@ -284,14 +320,18 @@ class Korbit(object):
         return _send_get_request(url, headers=headers)
 
     def get_fee(self, currency="all"):
-        if currency == "all":
-            currency_pair = "all"
-        else:
-            currency_pair = currency.lower() + "_krw"
+        try:
+            if currency == "all":
+                currency_pair = "all"
+            else:
+                currency_pair = currency.lower() + "_krw"
 
-        url = "https://api.korbit.co.kr/v1/user/volume?currency_pair={}".format(currency_pair)
-        headers = self.get_headers()
-        return _send_get_request(url, headers=headers)
+            url = "https://api.korbit.co.kr/v1/user/volume?currency_pair={}".format(currency_pair)
+            headers = self.get_headers()
+            return _send_get_request(url, headers=headers)
+        except Exception as x:
+            print(x.__class__.__name__)
+            return None
 
 
 if __name__ == "__main__":

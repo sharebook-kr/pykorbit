@@ -36,14 +36,18 @@ def get_current_price(currency="BTC"):
     :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :return: price
     """
-    currency = currency.lower() + "_krw"
-    url = "https://api.korbit.co.kr/v1/ticker"
-    contents = _call_public_api(url, currency_pair=currency)
+    try:
+        currency = currency.lower() + "_krw"
+        url = "https://api.korbit.co.kr/v1/ticker"
+        contents = _call_public_api(url, currency_pair=currency)
 
-    if contents is not None:
-        price = contents['last']
-        return float(price)
-    else:
+        if contents is not None:
+            price = contents['last']
+            return float(price)
+        else:
+            return None
+    except Exception as x:
+        print(x.__class__.__name__)
         return None
 
 
@@ -53,17 +57,21 @@ def get_market_detail(currency="BTC"):
     :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :return: (24시간저가, 24시간고가, 최종체결가격, 거래량)
     """
-    currency = currency.lower() + "_krw"
-    url = "https://api.korbit.co.kr/v1/ticker/detailed"
-    contents = _call_public_api(url, currency_pair=currency)
+    try:
+        currency = currency.lower() + "_krw"
+        url = "https://api.korbit.co.kr/v1/ticker/detailed"
+        contents = _call_public_api(url, currency_pair=currency)
 
-    if contents is not None:
-        low  = contents['low']
-        high = contents['high']
-        last = contents['last']
-        volume = contents['volume']
-        return float(low), float(high), float(last), float(volume)
-    else:
+        if contents is not None:
+            low  = contents['low']
+            high = contents['high']
+            last = contents['last']
+            volume = contents['volume']
+            return float(low), float(high), float(last), float(volume)
+        else:
+            return None, None, None, None
+    except Exception as x:
+        print(x.__class__.__name__)
         return None, None, None, None
 
 
@@ -73,10 +81,14 @@ def get_orderbook(currency="BTC"):
     :param currency: BTC/BCH/BTG/ETH/ETC/XRP
     :return: 매수/매도 호가
     """
-    currency = currency.lower() + "_krw"
-    url = "https://api.korbit.co.kr/v1/orderbook"
-    contents = _call_public_api(url, currency_pair=currency)
-    return contents
+    try:
+        currency = currency.lower() + "_krw"
+        url = "https://api.korbit.co.kr/v1/orderbook"
+        contents = _call_public_api(url, currency_pair=currency)
+        return contents
+    except Exception as x:
+        print(x.__class__.__name__)
+        return None
 
 
 def get_transaction_data(currency="BTC", interval="day"):
@@ -86,10 +98,14 @@ def get_transaction_data(currency="BTC", interval="day"):
     :param interval: minute/hour/day
     :return:
     """
-    currency = currency.lower() + "_krw"
-    url = "https://api.korbit.co.kr/v1/transactions"
-    contents = _call_public_api(url, currency_pair=currency, time=interval)
-    return contents
+    try:
+        currency = currency.lower() + "_krw"
+        url = "https://api.korbit.co.kr/v1/transactions"
+        contents = _call_public_api(url, currency_pair=currency, time=interval)
+        return contents
+    except Exception as x:
+        print(x.__class__.__name__)
+        return None
 
 
 def get_constants():
@@ -97,11 +113,15 @@ def get_constants():
     가상 화폐에 관련된 제약 조건을 얻어오는 메서드
     :return: Dict
     """
-    url = "https://api.korbit.co.kr/v1/constants"
-    contents = _call_public_api(url)
-    if contents is not None:
-        return contents['exchange']
-    else:
+    try:
+        url = "https://api.korbit.co.kr/v1/constants"
+        contents = _call_public_api(url)
+        if contents is not None:
+            return contents['exchange']
+        else:
+            return None
+    except Exception as x:
+        print(x.__class__.__name__)
         return None
 
 
