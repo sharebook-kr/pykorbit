@@ -309,15 +309,59 @@ class Korbit(object):
         headers = self.get_headers()
         return _send_get_request(url, headers=headers)
 
-    def get_orders(self):
-        url = "https://api.korbit.co.kr/v1/user/orders"
-        headers = self.get_headers()
-        return _send_get_request(url, headers=headers)
+    def get_orders(self, currency_pair="BTC", status=None, id=None, offset=0, limit=40):
+        '''
+        거래소 주문 조회
+        :param currency_pair: ticker
+        :param status: 'unfilled', 'partially_filled', 'filled'
+        :param id: 주문 ID or 주문 ID 리스트
+        :param offset: 0
+        :param limit: 40
+        :return:
+        '''
+        try:
+            params = []
+            url = "https://api.korbit.co.kr/v1/user/orders?"
+            currency_pair = "currency_pair={}".format(currency_pair.lower() + "_krw")
+            params.append(currency_pair)
+
+            if isinstance(status, str):
+                status = "status={}".format(status)
+            elif isinstance(status, list) or isinstance(status, tuple):
+                status_list = ["status={}".format(state) for state in status]
+                status = "&".join(status_list)
+            if status is not None:
+                params.append(status)
+
+            if isinstance(id, int):
+                id = "id={}".format(id)
+            elif isinstance(id, list) or isinstance(id, tuple):
+                id_list = ["id={}".format(cur_id) for cur_id in id]
+                id = "&".join(id_list)
+            if id is not None:
+                params.append(id)
+
+            offset = "offset={}".format(offset)
+            params.append(offset)
+
+            limit = "limit={}".format(limit)
+            params.append(limit)
+
+            url_with_params = url + "&".join(params)
+            headers = self.get_headers()
+            return _send_get_request(url_with_params, headers=headers)
+        except Exception as x:
+            print(x.__class__.__name__)
+            return None
 
     def get_transfers(self, currency="KRW", type="all", offset=0, limit=40):
-        url = "https://api.korbit.co.kr/v1/user/transfers?currency={}&type={}&offset={}&limit={}".format(currency, type, offset, limit)
-        headers = self.get_headers()
-        return _send_get_request(url, headers=headers)
+        try:
+            url = "https://api.korbit.co.kr/v1/user/transfers?currency={}&type={}&offset={}&limit={}".format(currency, type, offset, limit)
+            headers = self.get_headers()
+            return _send_get_request(url, headers=headers)
+        except Exception as x:
+            print(x.__class__.__name__)
+            return None
 
     def get_fee(self, currency="all"):
         try:
@@ -376,15 +420,17 @@ if __name__ == "__main__":
     # print(open_orders)
 
     # 거래소 주문 조회
-    orders = korbit.get_orders()
-    print(len(orders))
+    orders = korbit.get_orders(currency_pair="BTC")
+    print(orders)
+
+    orders = korbit.get_orders(currency_pair="BTC", status=["unfilled", "partially_filled"], id=[900308])
     print(orders)
 
     # 입출금 내역 조회
-    transfers = korbit.get_transfers()
-    print(len(transfers))
-    print(transfers)
+    #transfers = korbit.get_transfers()
+    #print(len(transfers))
+    #print(transfers)
 
     # 거래량과 거래 수수료
-    fee = korbit.get_fee("BTC")
-    print(fee)
+    #fee = korbit.get_fee("BTC")
+    #print(fee)
