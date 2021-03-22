@@ -128,7 +128,7 @@ def get_constants():
 def get_tickers():
     try:
         constants = get_constants()
-        return [x[:3].upper() for x in constants.keys()]
+        return [x.split("_")[0].upper() for x in constants.keys()]
     except Exception as x:
         print(x.__class__.__name__)
         return None
