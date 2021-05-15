@@ -12,33 +12,48 @@ def get_ohlc(symbol="BTC", timeunit="day", start=None, end=None, period=None):
     :param period: 5 days
     :return:
     '''
-    try:
-        start = datetime.datetime.strptime(start, "%Y-%m-%d")
-    except:
-        start = datetime.datetime(2013, 9, 4)
+    # HACK
+    # - symbol of MED in cryptocompare is MEDIB
+    if symbol == "MED":
+        symbol = "MEDIB"
 
-    try:
-        end = datetime.datetime.strptime(end, "%Y-%m-%d")
-    except:
-        end = datetime.datetime.now() - datetime.timedelta(days=2)
-
-    end += datetime.timedelta(days=1)
-    delta = end - start
-    timestamp = int(end.timestamp())
-
-    if isinstance(period, int):
-        limit = period
-    else:
-        if timeunit == 'day':
-            limit = delta.days
+    if start == None and end == None:
+        end = datetime.datetime.now()
+        if period != None:
+            assert(period > 0)
+            start = end - datetime.timedelta(days=period-1)
         else:
-            limit = 2001
+            start = datetime.datetime(2013, 9, 4)
+    elif start == None:   # end != None
+        end = pd.to_datetime(end)
+        if period != None:
+            assert(period > 0)
+            start = end - datetime.timedelta(days=period-1)
+        else:
+            start = datetime.datetime(2013, 9, 4)
+    elif end == None: # start != None
+        start = pd.to_datetime(start)
+        if period != None:
+            assert(period > 0)
+            end = start + datetime.timedelta(days=period-1)
+        else:
+            end = datetime.datetime.now() #- datetime.timedelta(days=1)
+    else:
+        start = pd.to_datetime(start)
+        end = pd.to_datetime(end)
+        if period != None:
+            print(f"period is ignored")
 
-    payload = {"fsym": symbol,
-               "tsym": "KRW",
-               "e": "Korbit",
-               "limit": limit-1,
-               "toTs": timestamp}
+    delta = end - start
+    limit = min(2000, delta.days)
+
+    payload = {
+        "fsym" : symbol,
+        "tsym" : "KRW",
+        "e"    : "Korbit",
+        "limit": limit,
+        "toTs" : int(end.timestamp())
+    }
 
     try:
         url = "https://min-api.cryptocompare.com/data/histo" + timeunit
@@ -50,7 +65,10 @@ def get_ohlc(symbol="BTC", timeunit="day", start=None, end=None, period=None):
     if content is not None:
         date_list = [datetime.datetime.fromtimestamp(x['time']) for x in content['Data']]
         df = pd.DataFrame(content['Data'], columns=['open', 'high', 'low', 'close'], index=date_list)
-        return df
+        all_zero_cnt = df.all(axis=1).astype(int).sum()
+        if all_zero_cnt > 0:
+            print(f"INFO: all zero {all_zero_cnt} row(s) are removed in X-axis")
+        return df.loc[df.all(axis=1)]
     else:
         return None
 
@@ -62,9 +80,10 @@ if __name__ == "__main__":
     #print(get_ohlc(symbol="BTC", end="2018-02-03", period=5))
 
     # hour
+    print(get_ohlc(symbol="BTC"))
     print(get_ohlc(symbol="BTC", timeunit='hour'))
-    print(get_ohlc(symbol="BTC", timeunit='hour', period=5))
+    # /print(get_ohlc(symbol="BTC", timeunit='hour', period=5))
 
-    # minute
+    # # minute
     print(get_ohlc(symbol="BTC", timeunit='minute'))
     print(get_ohlc(symbol="BTC", timeunit='minute', period=5))
