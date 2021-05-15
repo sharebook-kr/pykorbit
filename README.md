@@ -54,13 +54,13 @@ pykorbit.get_constants()
 
 ## Private API
 ```python
-korbit = pykorbit.Korbit("your-email@gmail.com", "your-pass-word", "key", "secret")
+korbit = pykorbit.Korbit("key", "secret")
 korbit.buy_market_order("ETC", 9800)
 korbit.buy_limit_order("ETC", 30000, 0.1)
 korbit.sell_limit_order("ETC", 45000, 0.28)
 korbit.sell_market_order("ETC", 0.1)
 
-# 주문 취소 
+# 주문 취소
 korbit.cancel_order("BTC", 9000)
 korbit.cancel_order("BTC", [1000, 10001])
 

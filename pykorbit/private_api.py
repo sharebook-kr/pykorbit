@@ -34,9 +34,7 @@ def _send_get_request(url, headers=None):
 
 
 class Korbit(object):
-    def __init__(self, email=None, password=None, key=None, secret=None):
-        self.email = email
-        self.password = password
+    def __init__(self, key=None, secret=None):
         self.key = key
         self.secret = secret
         self.constant = None
@@ -54,11 +52,11 @@ class Korbit(object):
         :return:
         """
         url = "https://api.korbit.co.kr/v1/oauth2/access_token"
-        data = {"client_id": self.key,
-                "client_secret": self.secret,
-                "grant_type": "password",
-                "username": self.email,
-                "password": self.password}
+        data = {
+            "client_id": self.key,
+            "client_secret": self.secret,
+            "grant_type": "client_credentials",
+        }
 
         contents = _send_post_request(url, data=data)
 
