@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name            = 'pykorbit',
-    version         = '0.2.0',
+    version         = '0.2.1',
     description     = 'python wrapper for Korbit API',
     url             = 'https://github.com/sharebook-kr/pykorbit',
     author          = 'brayden.jo, jonghun.yoo',
