@@ -16,7 +16,7 @@ class WebSocketManager(mp.Process):
 
     async def __connect_socket(self):
         uri = "wss://ws.korbit.co.kr/v1/user/push"
-        async with websockets.connect(uri) as websocket:
+        async with websockets.connect(uri, ping_interval=None) as websocket:
             now = datetime.datetime.now()
             timestamp = int(now.timestamp() * 1000)
             subscribe_fmt = {
@@ -28,13 +28,17 @@ class WebSocketManager(mp.Process):
                 }
             }
             await websocket.send(json.dumps(subscribe_fmt))
+            recv_data = await websocket.recv()
+            recv_data = json.loads(recv_data)
+            assert(recv_data['event'] == 'korbit:connected')
+
+            recv_data = await websocket.recv()
+            recv_data = json.loads(recv_data)
+            assert(recv_data['event'] == 'korbit:subscribe')
 
             while self.alive:
-                try:
-                    recv_data = await websocket.recv()
-                    self.__q.put(json.loads(recv_data))
-                except websockets.exceptions.ConnectionClosedError:
-                    self.__q.put('ConnectionClosedError')
+                recv_data = await websocket.recv()
+                self.__q.put(json.loads(recv_data))
 
     def run(self):
         self.__aloop = asyncio.get_event_loop()
