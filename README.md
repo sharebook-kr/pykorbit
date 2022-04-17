@@ -66,6 +66,9 @@ korbit.cancel_order("BTC", [1000, 10001])
 
 # 지갑 잔고 조회
 korbit.get_balances()
+
+# 미체결 주문 내역
+korbit.get_open_orders(currency="BTC", offset=0, limit=10)
 ```
 
 ## History
