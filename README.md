@@ -71,6 +71,9 @@ korbit.get_balances()
 korbit.get_open_orders(currency="BTC", offset=0, limit=10)
 ```
 
+### 참고 사항
+가격은 `round(price, 4)`, 수량은 `round(qty, 8)` 등으로 처리하여 소수점 0.9999~를 방지해야 한다. 200.199999처럼 되면 주문 수탁이 거부된다.
+
 ## History
 ```python
 print(pykorbit.get_ohlc("BTC", period=5))
